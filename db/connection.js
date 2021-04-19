@@ -11,9 +11,11 @@ const client = new Pool({
 client.connect();
 const create_table_query = `
 CREATE TABLE IF NOT EXISTS blockchain_score (
-    coin varchar,
-    score varchar,
-    date timestamp
+  coin varchar,
+  address varchar,
+  score varchar,
+  date timestamp,
+  last_update timestamp
 );
 `;
 
@@ -24,21 +26,52 @@ client
   // .then(() => client.end());
 
 const createRow = (request, callback) => {
-  const { coin, score, date } = request;
+  const { coin, score, address, date, last_update } = request;
 
   client.query(
-    "INSERT INTO blockchain_score (coin, score, date) VALUES ($1, $2, $3) RETURNING coin, score, date",
-    [coin, score, date],
+    "INSERT INTO blockchain_score (coin, score, address, date, last_update) VALUES ($1, $2, $3, $4, $5) RETURNING coin, score, address, date, last_update",
+    [coin, score, address, date, last_update],
     (error, result) => {
       if (error) {
-        throw error;
+        callback(error, null);
+      }else{
+        callback(error, result.rows[0]);
       }
-      callback(error, result.rows[0]);
       // client.end();
     }
   );
 };
 
+const updateRow = (request, callback) => {
+  const {address, last_update } = request;
+
+  client.query(
+    "UPDATE blockchain_score SET last_update = $1 WHERE address = $2 RETURNING coin, score, address, date, last_update",
+    [last_update, address],
+    (error, result) => {
+      if (error) {
+        callback(error, null);
+      }else{
+        callback(error, result.rows[0]);
+      }
+      // client.end();
+    }
+  );
+};
+
+
+const getRow = (req, callback) => {
+  client.query("SELECT * FROM blockchain_score WHERE address = $1",[req], (err, result) => {
+    if(err){
+      callback(err, null);
+    }else{
+      callback(null, result.rows[0]);
+    }
+  })
+}
+
 module.exports = {
-  createRow
+  createRow,
+  getRow,
+  updateRow
 };
