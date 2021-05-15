@@ -9,69 +9,56 @@ const client = new Pool({
 });
 
 client.connect();
-const create_table_query = `
-CREATE TABLE IF NOT EXISTS blockchain_score (
-  coin varchar,
-  address varchar,
-  score varchar,
-  date timestamp,
-  last_update timestamp
+
+const create_user_query = `
+CREATE TABLE IF NOT EXISTS users (
+  id serial,
+  name varchar,
+  email varchar,
+  password varchar
 );
 `;
 
+const create_posts_query = `
+CREATE TABLE IF NOT EXISTS posts (
+  id serial,
+  file_name varchar,
+  file_url varchar,
+  file_type varchar,
+  file_id varchar,
+  accessor_names varchar
+);
+`;
+
+const create_relation_query = `
+CREATE TABLE IF NOT EXISTS userfriends (
+  id serial,
+  user_id varchar,
+  friend_name varchar,
+  friend_email varchar
+);
+`;
+
+
 client
-  .query(create_table_query)
-  .then(result => console.log('table created successfully')) // your callback here
+  .query(create_user_query)
+  .then(result => console.log('user table created successfully')) // your callback here
   .catch(e => console.error('db connection error',e.stack)) // your callback here
   // .then(() => client.end());
 
-const createRow = (request, callback) => {
-  const { coin, score, address, date, last_update } = request;
+client
+  .query(create_posts_query)
+  .then(result => console.log('post table created successfully')) // your callback here
+  .catch(e => console.error('db connection error',e.stack)) // your callback here
+  // .then(() => client.end());
 
-  client.query(
-    "INSERT INTO blockchain_score (coin, score, address, date, last_update) VALUES ($1, $2, $3, $4, $5) RETURNING coin, score, address, date, last_update",
-    [coin, score, address, date, last_update],
-    (error, result) => {
-      if (error) {
-        callback(error, null);
-      }else{
-        callback(error, result.rows[0]);
-      }
-      // client.end();
-    }
-  );
-};
+client
+  .query(create_relation_query)
+  .then(result => console.log('relation table created successfully')) // your callback here
+  .catch(e => console.error('db connection error',e.stack)) // your callback here
+  // .then(() => client.end());
 
-const updateRow = (request, callback) => {
-  const {address, last_update } = request;
-
-  client.query(
-    "UPDATE blockchain_score SET last_update = $1 WHERE address = $2 RETURNING coin, score, address, date, last_update",
-    [last_update, address],
-    (error, result) => {
-      if (error) {
-        callback(error, null);
-      }else{
-        callback(error, result.rows[0]);
-      }
-      // client.end();
-    }
-  );
-};
-
-
-const getRow = (req, callback) => {
-  client.query("SELECT * FROM blockchain_score WHERE address = $1",[req], (err, result) => {
-    if(err){
-      callback(err, null);
-    }else{
-      callback(null, result.rows[0]);
-    }
-  })
-}
 
 module.exports = {
-  createRow,
-  getRow,
-  updateRow
+  client
 };

@@ -7,16 +7,28 @@ var filePath = require('../../config/initializers');
 // api version
 var currentVersion = filePath.currentVersionNumber;
 var setPath = '/api/'+currentVersion // example '/v1'
+var userPath = setPath + '/users';
+var postPath = setPath + '/posts';
+var friendPath = setPath + '/friends';
 
 // Require all the necessary models here
 
-bitcoin = require('../'+currentVersion+'/models/bitcoin');
-// bitcoin_cash = require('../'+currentVersion+'/models/bitcoin_cash');
+user = require('../'+currentVersion+'/models/user');
+
+post = require('../'+currentVersion+'/models/post');
+
+friend = require('../'+currentVersion+'/models/friend');
 
 //------------begin-----include all the necessary routes here----------------------
 // include user routes
-var scoreFile = require('../'+currentVersion+'/routes/score');
-scoreFile.scoreRoutes(router,setPath);
+var userFile = require('../'+currentVersion+'/routes/user');
+userFile.userRoutes(router,userPath);
+
+var postFile = require('../'+currentVersion+'/routes/post');
+postFile.postRoutes(router,postPath);
+
+var friendFile = require('../'+currentVersion+'/routes/friends');
+friendFile.friendRoutes(router,friendPath);
 
 //------------end------------------------------------------------
 
