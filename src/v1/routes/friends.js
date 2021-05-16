@@ -1,7 +1,6 @@
 function friendRoutes(router, setPath) {
 
   router.post(setPath + "/", function(req, response) {
-    console.log('.....', req.body)
     var data = { user_id: req.body.user_id, friend_name: req.body.friend_name, friend_email: req.body.friend_email };
     friend.createNew(data, function(err, res){
         if(err){
@@ -15,6 +14,28 @@ function friendRoutes(router, setPath) {
           data: res
         });
     }
+      })
+  });
+
+  router.post(setPath + "/find", function(req, response) {
+    var data = { user_id: req.body.user_id, friend_name: req.body.friend_name };
+    friend.findFriend(data, function(err, res){
+        if(err){
+            response.send({
+              message: err,
+              data: false
+            });
+          }else if(res && res.id){
+            response.send({
+              message: "Find Friend Successfully",
+              data: true
+            });
+          }else{
+            response.send({
+              message: "Find Friend Successfully",
+              data: false
+            });
+          }
       })
   });
 

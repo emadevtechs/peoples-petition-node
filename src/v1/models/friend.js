@@ -31,3 +31,15 @@ module.exports.getFriends = async function(params, callback) {
     }
   })
 };
+
+module.exports.findFriend = async function(params, callback) {
+  const { user_id, friend_name } = params;
+
+  client.query("SELECT * FROM userfriends WHERE user_id = $1 AND friend_name = $2",[user_id, friend_name], (err, result) => {
+    if(err){
+      callback(err, null);
+    }else{
+      callback(null, result.rows[0]);
+    }
+  })
+};
