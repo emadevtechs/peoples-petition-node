@@ -65,11 +65,11 @@ function friendRoutes(router, setPath) {
               data: null
             });
           }else{
-      response.send({
-        message: "Get User Successfully",
-        data: res
-      });
-    }
+          response.send({
+            message: "Get Friends Successfully",
+            data: res
+          });
+        }
     })
   });
 
