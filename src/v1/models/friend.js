@@ -19,6 +19,20 @@ module.exports.createNew = async function(params, callback) {
   );
 };
 
+module.exports.removeFrnd = async function(params, callback) {
+  const { user_id, friend_name } = params;
+
+  client.query(
+    "DELETE FROM userfriends WHERE user_id = $1 AND friend_name = $2",[user_id, friend_name], (error, result) => {
+      if (error) {
+        callback(error, null);
+      }else{
+        callback(error, result.rows[0]);
+      }
+      // client.end();
+    }
+  );
+};
 
 module.exports.getFriends = async function(params, callback) {
   const { user_id } = params;

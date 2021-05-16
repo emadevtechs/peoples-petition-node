@@ -1,6 +1,6 @@
 function friendRoutes(router, setPath) {
 
-  router.post(setPath + "/", function(req, response) {
+  router.post(setPath + "/addfrnd", function(req, response) {
     var data = { user_id: req.body.user_id, friend_name: req.body.friend_name, friend_email: req.body.friend_email };
     friend.createNew(data, function(err, res){
         if(err){
@@ -10,7 +10,24 @@ function friendRoutes(router, setPath) {
             });
           }else{
         response.send({
-          message: "Create User Successfully",
+          message: "Create Relationship Successfully",
+          data: res
+        });
+    }
+      })
+  });
+
+  router.post(setPath + "/removefrnd", function(req, response) {
+    var data = { user_id: req.body.user_id, friend_name: req.body.friend_name };
+    friend.removeFrnd(data, function(err, res){
+        if(err){
+            response.send({
+              message: err,
+              data: null
+            });
+          }else{
+        response.send({
+          message: "Delete Relationship Successfully",
           data: res
         });
     }
