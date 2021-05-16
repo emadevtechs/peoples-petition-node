@@ -26,7 +26,9 @@ CREATE TABLE IF NOT EXISTS posts (
   file_url varchar,
   file_type varchar,
   file_id varchar,
-  accessor_names varchar
+  accessor_names varchar,
+  is_text boolean,
+  text varchar
 );
 `;
 
