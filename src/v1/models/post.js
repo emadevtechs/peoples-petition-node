@@ -5,7 +5,7 @@ module.exports.createPost = async function(params, callback) {
   const { file_name, file_url, file_type, file_id, accessor_names, is_text, text } = params;
 
   client.query(
-    "INSERT INTO posts (file_name, file_url, file_type, file_id, accessor_names, is_text, text ) VALUES ($1, $2, $3, $4, $5) RETURNING id, file_name, file_url, file_type, file_id, accessor_names, is_text, text",
+    "INSERT INTO posts (file_name, file_url, file_type, file_id, accessor_names, is_text, text ) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, file_name, file_url, file_type, file_id, accessor_names, is_text, text",
     [file_name, file_url, file_type, file_id, accessor_names, is_text, text],
     (error, result) => {
         console.log('post create', error, result)
