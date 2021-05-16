@@ -46,9 +46,14 @@ function userRoutes(router, setPath) {
           message: err,
           data: null
         });
-      }else{
+      }else if(res && res.id){
       response.send({
         message: "User login Successfully",
+        data: res
+      });
+    }else{
+      response.send({
+        message: "User not Found",
         data: res
       });
     }
