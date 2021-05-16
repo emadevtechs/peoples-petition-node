@@ -1,7 +1,3 @@
-const db = require("../../../db/connection");
-var moment = require("moment");
-const { authUser, authIps, authKeys } = require('../authorization/auth');
-
 function userRoutes(router, setPath) {
 
   router.post(setPath + "/", function(req, response) {
@@ -33,6 +29,22 @@ function userRoutes(router, setPath) {
       }else{
       response.send({
         message: "Get User Successfully",
+        data: res
+      });
+    }
+    })
+  });
+
+  router.get(setPath + "/", function(req, response) {
+    user.getUsers(null, function(err, res){
+      if(err){
+        response.send({
+          message: err,
+          data: null
+        });
+      }else{
+      response.send({
+        message: "Get Users Successfully",
         data: res
       });
     }

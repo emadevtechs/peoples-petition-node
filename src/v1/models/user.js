@@ -20,6 +20,16 @@ module.exports.createUser = async function(params, callback) {
 };
 
 
+module.exports.getUsers = async function(params, callback) {
+  client.query("SELECT * FROM users", (err, result) => {
+    if(err){
+      callback(err, null);
+    }else{
+      callback(null, result.rows);
+    }
+  })
+};
+
 module.exports.getUser = async function(params, callback) {
   const { id } = params;
 
