@@ -2,8 +2,7 @@ function userRoutes(router, setPath) {
 
   router.post(setPath + "/", function(req, response) {
     console.log('.....', req.body)
-    var data = { name: req.body.name, email: req.body.email, password: req.body.password };
-    user.createUser(data, function(err, res){
+    user.createUser(req.body, function(err, res){
       if(err){
         response.send({
           message: err,

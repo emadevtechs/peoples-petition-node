@@ -12,52 +12,44 @@ client.connect();
 
 const create_user_query = `
 CREATE TABLE IF NOT EXISTS users (
-  id serial,
+  id serial PRIMARY KEY,
   name varchar,
   email varchar,
-  password varchar
+  password varchar,
+  phone_number bigint,
+  profile_url varchar,
+  address varchar,
+  district varchar
 );
 `;
 
 const create_posts_query = `
 CREATE TABLE IF NOT EXISTS posts (
   id serial,
-  file_name varchar,
-  file_url varchar,
-  file_type varchar,
-  file_id varchar,
-  accessor_names varchar,
-  is_text boolean,
-  text varchar
-);
-`;
-
-const create_relation_query = `
-CREATE TABLE IF NOT EXISTS userfriends (
-  id serial,
-  user_id varchar,
-  friend_name varchar,
-  friend_email varchar
+  picture_url varchar,
+  user_id int,
+  status varchar,
+  district varchar,
+  text varchar,
+  FOREIGN KEY(user_id) 
+	  REFERENCES users(id)
 );
 `;
 
 
 client
   .query(create_user_query)
-  .then(result => console.log('user table created successfully')) // your callback here
-  .catch(e => console.error('db connection error',e.stack)) // your callback here
-  // .then(() => client.end());
+  .then(result => {
+      console.log('user table created successfully'),
+      client
+        .query(create_posts_query)
+        .then(result => console.log('post table created successfully')) // your callback here
+        .catch(e => console.error('post db connection error',e.stack)) // your callback here
+    // .then(() => client.end());
 
-client
-  .query(create_posts_query)
-  .then(result => console.log('post table created successfully')) // your callback here
-  .catch(e => console.error('db connection error',e.stack)) // your callback here
-  // .then(() => client.end());
-
-client
-  .query(create_relation_query)
-  .then(result => console.log('relation table created successfully')) // your callback here
-  .catch(e => console.error('db connection error',e.stack)) // your callback here
+  } 
+    ) // your callback here
+  .catch(e => console.error('user db connection error',e.stack)) // your callback here
   // .then(() => client.end());
 
 

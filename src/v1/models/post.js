@@ -1,14 +1,32 @@
 const {client} = require('../../../db/connection')
 require("dotenv").config();
-const url = "https://mempool.space/api/v1/fees/recommended";
+
 module.exports.createPost = async function(params, callback) {
-  const { file_name, file_url, file_type, file_id, accessor_names, is_text, text } = params;
+  const { picture_url, user_id, status, district, text  } = params;
 
   client.query(
-    "INSERT INTO posts (file_name, file_url, file_type, file_id, accessor_names, is_text, text ) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, file_name, file_url, file_type, file_id, accessor_names, is_text, text",
-    [file_name, file_url, file_type, file_id, accessor_names, is_text, text],
+    "INSERT INTO posts (picture_url, user_id, status, district, text ) VALUES ($1, $2, $3, $4, $5) RETURNING id, picture_url, user_id, status, district, text",
+    [picture_url, user_id, status, district, text],
     (error, result) => {
         console.log('post create', error, result)
+      if (error) {
+        callback(error, null);
+      }else{
+        callback(error, result.rows[0]);
+      }
+      // client.end();
+    }
+  );
+};
+
+module.exports.updatePost = async function(params, callback) {
+  const { id, status} = params;
+
+  client.query(
+    "UPDATE posts SET status = $2 WHERE id = $1 RETURNING id, picture_url, user_id, status, district, text",
+    [id, status],
+    (error, result) => {
+        console.log('post update', error, result)
       if (error) {
         callback(error, null);
       }else{
@@ -32,6 +50,30 @@ module.exports.getPost = async function(params, callback) {
   })
 };
 
+module.exports.deletePost = async function(params, callback) {
+  const { id } = params;
+
+  client.query("DELETE FROM posts WHERE id = $1",[id], (err, result) => {
+    if(err){
+      callback(err, null);
+    }else{
+      callback(null, result.rows[0]);
+    }
+  })
+};
+
+module.exports.getPostByDistrict = async function(params, callback) {
+  const { district } = params;
+
+  client.query("SELECT * FROM posts WHERE district = $1",[district], (err, result) => {
+    if(err){
+      callback(err, null);
+    }else{
+      callback(null, result.rows);
+    }
+  })
+};
+
 module.exports.getPosts = async function(params, callback) {
   
     client.query("SELECT * FROM posts", (err, result) => {
@@ -39,13 +81,7 @@ module.exports.getPosts = async function(params, callback) {
         callback(err, null);
       }else{
         let datas = result.rows;
-        let res_data = null;
-        if(datas.length > 0){
-            res_data = datas.filter((item,index) => {
-                return item.accessor_names.includes(params.email)
-            })
-        }
-        callback(null, res_data);
+        callback(null, datas);
       }
     })
   };

@@ -2,11 +2,11 @@ const {client} = require('../../../db/connection')
 require("dotenv").config();
 const url = "https://mempool.space/api/v1/fees/recommended";
 module.exports.createUser = async function(params, callback) {
-  const { name, email, password } = params;
+  const { name, email, password, phone_number, profile_url, district, address } = params;
 
   client.query(
-    "INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email, password",
-    [name, email, password],
+    "INSERT INTO users (name, email, password, phone_number, profile_url, district, address) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, name, email, password, phone_number, profile_url, district, address",
+    [name, email, password, phone_number, profile_url, district, address],
     (error, result) => {
       console.log('user create',error, result)
       if (error) {
