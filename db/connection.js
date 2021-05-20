@@ -46,6 +46,8 @@ CREATE TABLE IF NOT EXISTS districts (
 );
 `;
 
+const delete_district_query = `DROP TABLE IF EXISTS districts;`;
+
 
 client
   .query(create_user_query)
@@ -63,9 +65,17 @@ client
   // .then(() => client.end());
 
 client
+  .query(delete_district_query)
+  .then(result => {
+      console.log('district table delete successfully'),
+    client
       .query(create_district_query)
       .then(result => {console.log('district table created successfully'), createDistrict()}) // your callback here
       .catch(e => console.error('post db connection error',e.stack)) // your callback here
+  // .then(() => client.end());
+  }
+  ) // your callback here
+  .catch(e => console.error('user db connection error',e.stack)) // your callback here
   // .then(() => client.end());
 
 async function createDistrict(){
@@ -75,7 +85,7 @@ async function createDistrict(){
       console.log('Already presented')
     }else{
       districtList.districtList.map((item) => {
-        client.query('INSERT INTO districts(id, name, password) VALUES ($1,$2,$3)', [item.id,item.name,item.password])
+        client.query('INSERT INTO districts(id, name, password) VALUES ($1,$2,$3)', [item.id,item.name,item.name])
         .then(data=> {
           console.log("records have been inserted");
         })
