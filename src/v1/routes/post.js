@@ -1,7 +1,3 @@
-const db = require("../../../db/connection");
-var moment = require("moment");
-const { authUser, authIps, authKeys } = require('../authorization/auth');
-
 function postRoutes(router, setPath) {
 
   router.post(setPath + "/", function(req, response) {
@@ -70,8 +66,25 @@ function postRoutes(router, setPath) {
     })
   });
 
+  router.get(setPath + "/by_user/:user_id", function(req, response) {
+    var data = { user_id: req.params.user_id };
+    post.getPostByUser(data, function(err, res){
+        if(err){
+            response.send({
+              message: err,
+              data: null
+            });
+          }else{
+      response.send({
+        message: "Get Post By User Successfully",
+        data: res
+      });
+    }
+    })
+  });
+
   router.get(setPath + "/", function(req, response) {
-    post.getPosts(data, function(err, res){
+    post.getPosts(null, function(err, res){
         if(err){
             response.send({
               message: err,

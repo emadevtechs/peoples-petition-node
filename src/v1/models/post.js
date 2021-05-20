@@ -74,6 +74,18 @@ module.exports.getPostByDistrict = async function(params, callback) {
   })
 };
 
+module.exports.getPostByUser = async function(params, callback) {
+  const { user_id } = params;
+
+  client.query("SELECT * FROM posts WHERE user_id = $1",[user_id], (err, result) => {
+    if(err){
+      callback(err, null);
+    }else{
+      callback(null, result.rows);
+    }
+  })
+};
+
 module.exports.getPosts = async function(params, callback) {
   
     client.query("SELECT * FROM posts", (err, result) => {

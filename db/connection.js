@@ -1,5 +1,7 @@
 require("dotenv").config();
 const Pool = require("pg").Pool;
+const districtList = require('./districtList');
+
 const isProduction = process.env.NODE_ENV === "production";
 const connectionString = `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`;
 
@@ -36,6 +38,14 @@ CREATE TABLE IF NOT EXISTS posts (
 );
 `;
 
+const create_district_query = `
+CREATE TABLE IF NOT EXISTS districts (
+  id integer,
+  name varchar,
+  password varchar
+);
+`;
+
 
 client
   .query(create_user_query)
@@ -52,6 +62,29 @@ client
   .catch(e => console.error('user db connection error',e.stack)) // your callback here
   // .then(() => client.end());
 
+client
+      .query(create_district_query)
+      .then(result => {console.log('district table created successfully'), createDistrict()}) // your callback here
+      .catch(e => console.error('post db connection error',e.stack)) // your callback here
+  // .then(() => client.end());
+
+async function createDistrict(){
+  let data = await client.query("SELECT * FROM districts");
+  console.log('.....da',data);
+    if(data && data.rows && data.rows.length > 0){
+      console.log('Already presented')
+    }else{
+      districtList.districtList.map((item) => {
+        client.query('INSERT INTO districts(id, name, password) VALUES ($1,$2,$3)', [item.id,item.name,item.password])
+        .then(data=> {
+          console.log("records have been inserted");
+        })
+        .catch(error=> {
+          console.log("Error, no records inserted",error);
+        });
+      });
+    }
+}
 
 module.exports = {
   client
